@@ -3,38 +3,34 @@ from rest_framework import serializers
 
 
 class QuestionnaireSerializer(serializers.ModelSerializer):
-    alias = serializers.SerializerMethodField()
-
     class Meta:
         model = Questionnaire
         fields = (
-            'user_id', 'confidence', 'penetration', 'intercourse', 'completion', 'satisfaction', 'score', 'average'
+            'user', 'confidence', 'penetration', 'intercourse', 'completion', 'satisfaction', 'average', 'score',
+            'created_at',
         )
         read_only_fields = (
-            'created_at'
+            'created_at',
+            'average',
+            'score',
         )
-
-    def get_alias(self, short_url):
-        request = self.context['request']
-        hostname = request.META['HTTP_HOST']
-        return f'{request.scheme}://{hostname}/r/?id={short_url.short_id}'
 
     def create(self, validated_data):
         request = self.context['request']
-        confidence = request.data['confidence']
-        penetration = request.data['penetration']
-        intercourse = request.data['intercourse']
-        completion = request.data['completion']
-        satisfaction = request.data['satisfaction']
-        score = confidence + penetration + intercourse + completion + satisfaction,
-        average = (confidence + penetration + intercourse + completion + satisfaction) / 5,
+        confidence = int(request.data['confidence'])
+        penetration = int(request.data['penetration'])
+        intercourse = int(request.data['intercourse'])
+        completion = int(request.data['completion'])
+        satisfaction = int(request.data['satisfaction'])
+        score = confidence + penetration + intercourse + completion + satisfaction
+        average = (confidence + penetration + intercourse + completion + satisfaction) / 5
         if request.user.is_authenticated:
             user = request.user
         else:
-            user = None
+            user = 1
 
         return Questionnaire.objects.create(
-            user_id=user,
+            user_id=1,
             average=average,
             score=score,
             **validated_data,

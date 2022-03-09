@@ -39,15 +39,17 @@ class Questionnaire(models.Model):
         (4, 'Most times'),
         (5, 'Almost always or always'),
     )
-    user_id = models.ForeignKey('auth.user', on_delete=models.CASCADE, blank=False, null=False)
+    user = models.ForeignKey('auth.user', on_delete=models.CASCADE, blank=False, null=False)
     confidence = models.PositiveSmallIntegerField(choices=CONFIDENCE_CHOICES)
     penetration = models.PositiveSmallIntegerField(choices=PENETRATION_CHOICES)
     intercourse = models.PositiveSmallIntegerField(choices=INTERCOURSE_CHOICES)
     completion = models.PositiveSmallIntegerField(choices=COMPLETION_CHOICES)
     satisfaction = models.PositiveSmallIntegerField(choices=SATISFACTION_CHOICES)
     score = models.IntegerField(validators=[MaxValueValidator(25), MinValueValidator(5)], null=False, blank=False)
-    average = models.IntegerField(null=False, blank=False)
+    average = models.FloatField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['created_at']
+
+
